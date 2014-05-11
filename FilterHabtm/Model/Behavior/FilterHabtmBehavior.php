@@ -22,7 +22,6 @@ class FilterHabtmBehavior extends ModelBehavior {
 				}
 			}
 		}
-
 		if (empty($query['filter'])) {
 			return true;
 		}
@@ -33,16 +32,16 @@ class FilterHabtmBehavior extends ModelBehavior {
 
 			$association = $Model->hasAndBelongsToMany[$modelName];
 			list(, $with) = $this->_split($association['with']);
+
 			$query['joins'][] = array(
-				'table' => $association['joinTable'],
-				'alias' => $with,
+				'table' => $Model->{$with}->useTable,
+				'alias' => $Model->{$with}->alias,
 				'type' => 'INNER',
 				'foreignKey' => false,
 				'conditions' => array(
 					$Model->alias . '.' . $Model->primaryKey . ' = ' . $with . '.' . $association['foreignKey']
 				)
 			);
-
 			$query['joins'][] = array(
 				'table' => $Model->{$modelName}->table,
 				'alias' => $Model->{$modelName}->alias,
