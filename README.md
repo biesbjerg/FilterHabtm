@@ -1,12 +1,11 @@
 # CakePHP FilterHabtmBehavior
 
 **Add Behavior to model**
-
 ```php
 class Product extends AppModel {
 
 	public $actsAs = array(
-		'FilterHabtm
+		'FilterHabtm'
 	);
 
 }
@@ -14,8 +13,6 @@ class Product extends AppModel {
 
 **How to use the behavior**
 The following is normally not possible. 
-
-
 ```php
 
 // Product hasAndBelongsTo Category (join model CategoryProduct)
