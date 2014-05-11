@@ -1,18 +1,26 @@
 # CakePHP FilterHabtmBehavior
 
-**Add Behavior to model**
+**1. Copy plugin to app/Plugin/FilterHabtm folder**
+
+**2. Load plugin in your app/Config/bootstrap.php**
+
+```php
+CakePlugin::load('FilterHabtm')
+```
+
+**3. Add Behavior to model**
 
 ```php
 class Product extends AppModel {
 
 	public $actsAs = array(
-		'FilterHabtm'
+		'FilterHabtm.FilterHabtm'
 	);
 
 }
 ```
 
-**How to use the behavior**
+**4. How to use the behavior**
 
 The following is normally not possible. 
 ```php
