@@ -1,6 +1,7 @@
 # CakePHP FilterHabtmBehavior
 
 **Add Behavior to model**
+
 ```php
 class Product extends AppModel {
 
@@ -12,6 +13,7 @@ class Product extends AppModel {
 ```
 
 **How to use the behavior**
+
 The following is normally not possible. 
 ```php
 
