@@ -14,7 +14,8 @@ CakePlugin::load('FilterHabtm')
 class Product extends AppModel {
 
 	public $actsAs = array(
-		'FilterHabtm.FilterHabtm'
+		'FilterHabtm.FilterHabtm',
+		'Containable' // If you do use containable it's very important to load it AFTER FilterHabtm
 	);
 
 }
