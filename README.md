@@ -6,7 +6,7 @@
 class Product extends AppModel {
 
 	public $actsAs = array(
-		'FilterHabtm
+		'FilterHabtm'
 	);
 
 }
