@@ -15,7 +15,7 @@ class Product extends AppModel {
 
 	public $actsAs = array(
 		'FilterHabtm.FilterHabtm',
-		'Containable' // If you do use containable it's very important to load it AFTER FilterHabtm
+		'Containable' // If you use containable it's very important to load it AFTER FilterHabtm
 	);
 
 }
