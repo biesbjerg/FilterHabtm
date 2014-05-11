@@ -1,18 +1,20 @@
 # CakePHP FilterHabtmBehavior
 
-1. Add Behavior to model
+**Add Behavior to model**
 
 ```php
 class Product extends AppModel {
 
 	public $actsAs = array(
-		'FilterHabtm'
+		'FilterHabtm
 	);
 
 }
 ```
 
-2. Use the behavior
+**How to use the behavior**
+The following is normally not possible. 
+
 
 ```php
 
@@ -24,6 +26,4 @@ $this->Product->find('all', array(
 ));
 ```
 
-The above is normally not possible. 
-
-This behavior automatically detects when there's a condition involving an HABTM assocation and creates the proper joins behind the scenes.
+The behavior automatically detects conditions involving HABTM assocations and creates the proper joins behind the scenes.
