@@ -35,7 +35,8 @@ class FilterHabtmBehavior extends ModelBehavior {
 			}
 
 			list($habtmModel) = pluginSplit($key);
-			if (!isset($Model->hasAndBelongsToMany[$habtmModel])) {
+			$associations = $Model->getAssociated('hasAndBelongsToMany');
+			if (!in_array($habtmModel, $associations, true)) {
 				continue;
 			}
 
