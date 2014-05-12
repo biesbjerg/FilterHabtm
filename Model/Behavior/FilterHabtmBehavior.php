@@ -49,7 +49,7 @@ class FilterHabtmBehavior extends ModelBehavior {
 					'type' => 'INNER',
 					'foreignKey' => false,
 					'conditions' => array(
-						$Model->alias . '.' . $Model->primaryKey . ' = ' . $withModel . '.' . $association['foreignKey']
+						$Model->alias . '.' . $Model->primaryKey . ' = ' . $Model->{$withModel}->alias . '.' . $association['foreignKey']
 					)
 				);
 			}
@@ -60,7 +60,7 @@ class FilterHabtmBehavior extends ModelBehavior {
 					'type' => 'INNER',
 					'foreignKey' => false,
 					'conditions' => array(
-						$Model->{$habtmModel}->alias . '.' . $Model->{$habtmModel}->primaryKey . ' = ' . $withModel . '.' . $association['associationForeignKey']
+						$Model->{$habtmModel}->alias . '.' . $Model->{$habtmModel}->primaryKey . ' = ' . $Model->{$withModel}->alias . '.' . $association['associationForeignKey']
 					)
 				);
 			}
