@@ -14,54 +14,58 @@ class FilterHabtmBehavior extends ModelBehavior {
 
 	public function beforeFind(Model $Model, $query) {
 		if ($this->settings[$Model->alias]['automaticJoins']) {
-			foreach ((array)$query['conditions'] as $key => $val) {
-				list($modelName, $field) = $this->_split($key);
-				if (isset($Model->hasAndBelongsToMany[$modelName])) {
-					$query['filter'][$modelName][$modelName . '.' . $field] = $val;
-					unset($query['conditions'][$key]);
-				}
+			$joins = $this->extractJoins($Model, $query['conditions']);
+			foreach ($joins as $join) {
+				$query['joins'][] = $join;
 			}
 		}
-		if (empty($query['filter'])) {
-			return true;
-		}
-		foreach ($query['filter'] as $modelName => $conditions) {
-			if (!isset($Model->hasAndBelongsToMany[$modelName])) {
-				throw new Exception(sprintf('Model "%s" does not have an HABTM relation to "%s"', $Model->alias, $modelName));
-			}
-
-			$association = $Model->hasAndBelongsToMany[$modelName];
-			list(, $with) = $this->_split($association['with']);
-
-			$query['joins'][] = array(
-				'table' => $Model->{$with}->useTable,
-				'alias' => $Model->{$with}->alias,
-				'type' => 'INNER',
-				'foreignKey' => false,
-				'conditions' => array(
-					$Model->alias . '.' . $Model->primaryKey . ' = ' . $with . '.' . $association['foreignKey']
-				)
-			);
-			$query['joins'][] = array(
-				'table' => $Model->{$modelName}->table,
-				'alias' => $Model->{$modelName}->alias,
-				'type' => 'INNER',
-				'foreignKey' => false,
-				'conditions' => array(
-					$Model->{$modelName}->alias . '.' . $Model->{$modelName}->primaryKey . ' = ' . $with . '.' . $association['associationForeignKey']
-				)
-			);
-
-			if (!empty($conditions)) {
-				$query['conditions'] = Hash::merge($query['conditions'], $conditions);
-			}
-		}
-		unset($query['filter']);
 		return $query;
 	}
 
-	protected function _split($name) {
-		return pluginSplit($name);
+	public function extractJoins(Model $Model, $conditions) {
+		if (!is_array($conditions)) {
+			return array();
+		}
+
+		$joins = array();
+		foreach ($conditions as $key => $val) {
+			if (is_numeric($key)) {
+				$joins = array_merge($joins, $this->extractJoins($Model, $val));
+				continue;
+			}
+
+			list($habtmModel) = pluginSplit($key);
+			if (!isset($Model->hasAndBelongsToMany[$habtmModel])) {
+				continue;
+			}
+
+			$association = $Model->hasAndBelongsToMany[$habtmModel];
+			list($plugin, $withModel) = pluginSplit($association['with']);
+
+			if (!isset($joins[$withModel])) {
+				$joins[$withModel] = array(
+					'table' => $Model->{$withModel}->useTable,
+					'alias' => $Model->{$withModel}->alias,
+					'type' => 'INNER',
+					'foreignKey' => false,
+					'conditions' => array(
+						$Model->alias . '.' . $Model->primaryKey . ' = ' . $withModel . '.' . $association['foreignKey']
+					)
+				);
+			}
+			if (!isset($joins[$habtmModel])) {
+				$joins[$habtmModel] = array(
+					'table' => $Model->{$habtmModel}->table,
+					'alias' => $Model->{$habtmModel}->alias,
+					'type' => 'INNER',
+					'foreignKey' => false,
+					'conditions' => array(
+						$Model->{$habtmModel}->alias . '.' . $Model->{$habtmModel}->primaryKey . ' = ' . $withModel . '.' . $association['associationForeignKey']
+					)
+				);
+			}
+		}
+		return $joins;
 	}
 
 }
