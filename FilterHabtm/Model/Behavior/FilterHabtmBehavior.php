@@ -9,7 +9,7 @@ class FilterHabtmBehavior extends ModelBehavior {
 	public $settings = array();
 
 	public function setup(Model $Model, $settings = array()) {
-		$this->settings[$Model->alias] = $this->defaultSettings + $settings;
+		$this->settings[$Model->alias] = $settings + $this->defaultSettings;
 	}
 
 	public function beforeFind(Model $Model, $query) {
