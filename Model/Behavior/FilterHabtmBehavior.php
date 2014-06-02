@@ -53,6 +53,9 @@ class FilterHabtmBehavior extends ModelBehavior {
 						$Model->alias . '.' . $Model->primaryKey . ' = ' . $Model->{$withModel}->alias . '.' . $association['foreignKey']
 					)
 				);
+				if (!empty($association['conditions'])) {
+					$joins[$withModel]['conditions'] = Hash::merge($association['conditions'], $joins[$withModel]['conditions']);
+				}
 			}
 			if (!isset($joins[$habtmModel])) {
 				$joins[$habtmModel] = array(
@@ -64,6 +67,9 @@ class FilterHabtmBehavior extends ModelBehavior {
 						$Model->{$habtmModel}->alias . '.' . $Model->{$habtmModel}->primaryKey . ' = ' . $Model->{$withModel}->alias . '.' . $association['associationForeignKey']
 					)
 				);
+				if (!empty($association['conditions'])) {
+					$joins[$habtmModel]['conditions'] = Hash::merge($association['conditions'], $joins[$habtmModel]['conditions']);
+				}
 			}
 		}
 		return $joins;
