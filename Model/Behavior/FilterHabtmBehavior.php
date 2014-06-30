@@ -29,7 +29,7 @@ class FilterHabtmBehavior extends ModelBehavior {
 
 		$joins = array();
 		foreach ($conditions as $key => $val) {
-			if (is_numeric($key)) {
+			if (is_numeric($key) || in_array($key, array('OR', 'AND'), true)) {
 				$joins = array_merge($joins, $this->extractJoins($Model, $val));
 				continue;
 			}
