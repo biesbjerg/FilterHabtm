@@ -1,5 +1,5 @@
 <?php
-App::uses('ModelBehavior', 'Model/Behavior');
+App::uses('ModelBehavior', 'Model');
 class FilterHabtmBehavior extends ModelBehavior {
 
 	public $defaultSettings = array(
