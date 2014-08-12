@@ -28,20 +28,37 @@ class FilterHabtmBehavior extends ModelBehavior {
 		}
 
 		$joins = array();
-		foreach ($conditions as $key => $val) {
+		foreach ($conditions as $key => $val) { 
+		
+
 			if (is_numeric($key) || in_array($key, array('OR', 'AND'), true)) {
 				$joins = array_merge($joins, $this->extractJoins($Model, $val));
 				continue;
 			}
 
 			list($habtmModel) = pluginSplit($key);
+			
+			
+			$association = false ;
+			
 			$associations = $Model->getAssociated('hasAndBelongsToMany');
-			if (!in_array($habtmModel, $associations, true)) {
-				continue;
+			if ( in_array($habtmModel, $associations, true) ) {
+				$association = $Model->hasAndBelongsToMany[$habtmModel];
+				list($plugin, $withModel) = pluginSplit($association['with']);				
 			}
+		
+			
+			$associations = $Model->getAssociated('hasMany');
+			if ( in_array($habtmModel, $associations, true) ) {
+				$association = $Model->hasMany[$habtmModel];
 
-			$association = $Model->hasAndBelongsToMany[$habtmModel];
-			list($plugin, $withModel) = pluginSplit($association['with']);
+				$withModel = $association['className'] ;
+			}
+						
+			if ( ! $association )
+				continue;
+		
+				
 
 			if (!isset($joins[$withModel])) {
 				$joins[$withModel] = array(
