@@ -1,4 +1,27 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kim Biesbjerg
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 App::uses('ModelBehavior', 'Model');
 class FilterHabtmBehavior extends ModelBehavior {
 
@@ -39,13 +62,13 @@ class FilterHabtmBehavior extends ModelBehavior {
 			if (!in_array($habtmModel, $associations, true)) {
 				continue;
 			}
-
 			$association = $Model->hasAndBelongsToMany[$habtmModel];
 			list($plugin, $withModel) = pluginSplit($association['with']);
 
 			if (!isset($joins[$withModel])) {
+				$table = (!empty($Model->{$withModel}->tablePrefix)) ? $Model->{$withModel}->tablePrefix . $Model->{$withModel}->useTable : $Model->{$withModel}->useTable;
 				$joins[$withModel] = array(
-					'table' => $Model->{$withModel}->useTable,
+					'table' => $table,
 					'alias' => $Model->{$withModel}->alias,
 					'type' => 'INNER',
 					'foreignKey' => false,
@@ -58,10 +81,12 @@ class FilterHabtmBehavior extends ModelBehavior {
 				}
 			}
 			if (!isset($joins[$habtmModel])) {
+				$table = (!empty($Model->{$habtmModel}->tablePrefix)) ? $Model->{$habtmModel}->tablePrefix . $Model->{$habtmModel}->useTable : $Model->{$withModel}->useTable;
 				$joins[$habtmModel] = array(
-					'table' => $Model->{$habtmModel}->table,
+					'table' => $table,
 					'alias' => $Model->{$habtmModel}->alias,
 					'type' => 'INNER',
+					'className' => $plugin . '.' . $withModel,
 					'foreignKey' => false,
 					'conditions' => array(
 						$Model->{$habtmModel}->alias . '.' . $Model->{$habtmModel}->primaryKey . ' = ' . $Model->{$withModel}->alias . '.' . $association['associationForeignKey']
@@ -74,5 +99,4 @@ class FilterHabtmBehavior extends ModelBehavior {
 		}
 		return $joins;
 	}
-
 }
